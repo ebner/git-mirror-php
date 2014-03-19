@@ -75,7 +75,7 @@ foreach ($commands as $command) {
 	flush();
 
 	if ($return_code !== 0) {
-		printf('<div class="error">Error encountered! Script stopped to prevent data loss.</div>');
+		printf('Error encountered! Script stopped to prevent data loss.');
 		break;
 	}
 }

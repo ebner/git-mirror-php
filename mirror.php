@@ -12,8 +12,11 @@ define('SOURCE_REPOSITORY', 'git@github.com:ebner/git-mirror-php.git');
 // which repository to push to
 define('TARGET_REPOSITORY', 'git@bitbucket.org:ebner/git-mirror-php.git');
 
-// Time limit for each command.
-if (!defined('TIME_LIMIT')) define('TIME_LIMIT', 30);
+// a directory use to cache git clones, to avoid a full clone on every commit
+define('LOCAL_CACHE', '/srv/git-mirror-cache/repo');
+
+// Time limit in seconds for each command
+if (!defined('TIME_LIMIT')) define('TIME_LIMIT', 60);
 
 ?>
 <!DOCTYPE html>
@@ -37,22 +40,13 @@ $commands = array();
 // https://help.github.com/articles/duplicating-a-repository
 
 // Clone the repository into the TMP_DIR
-$commands[] = sprintf(
+if (!is_dir(LOCAL_CACHE)) {
+	$commands[] = sprintf('git clone --bare %s %s', SOURCE_REPOSITORY, LOCAL_CACHE);
+} else {
+	$commands[] = sprintf('git --git-dir=%s fetch --prune origin', LOCAL_CACHE);
+}
 
-//git clone --bare SOURCE_REPOSITORY
-//git fetch --prune origin
-//git push --mirror TARGET_REPOSITORY
-
-	'git clone --depth=1 --branch %s %s %s'
-	, BRANCH
-	, REMOTE_REPOSITORY
-	, TMP_DIR
-);
-
-// Update the submodules
-$commands[] = sprintf(
-	'git submodule update --init --recursive'
-);
+$commands[] = sprintf('git --git-dir=%s push --mirror %s', LOCAL_CACHE, TARGET_REPOSITORY);
 
 // run commands
 foreach ($commands as $command) {

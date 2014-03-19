@@ -21,13 +21,6 @@ if (!defined('TIME_LIMIT')) define('TIME_LIMIT', 30);
 <head>
 	<meta charset="utf-8">
 	<title>Git mirror script</title>
-	<style>
-		body { padding: 0 1em; background: #222; color: #fff; }
-		h2, .error { color: #c33; }
-		.prompt { color: #6be234; }
-		.command { color: #729fcf; }
-		.output { color: #999; }
-	</style>
 </head>
 <body>
 <?php
@@ -41,8 +34,15 @@ if (!isset($_GET['token']) || $_GET['token'] !== SECRET_ACCESS_TOKEN) {
 // The commands
 $commands = array();
 
+// https://help.github.com/articles/duplicating-a-repository
+
 // Clone the repository into the TMP_DIR
 $commands[] = sprintf(
+
+//git clone --bare SOURCE_REPOSITORY
+//git fetch --prune origin
+//git push --mirror TARGET_REPOSITORY
+
 	'git clone --depth=1 --branch %s %s %s'
 	, BRANCH
 	, REMOTE_REPOSITORY

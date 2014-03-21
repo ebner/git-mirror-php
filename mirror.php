@@ -35,7 +35,7 @@ define('TARGET_REPOSITORY', 'git@github.com:org/repo.git');
 define('LOCAL_CACHE', '/srv/git-mirror-cache/repo.git');
 
 // Time limit in seconds for each command
-if (!defined('TIME_LIMIT')) define('TIME_LIMIT', 60);
+define('TIME_LIMIT', 60);
 
 ?>
 <!DOCTYPE html>
@@ -53,17 +53,25 @@ if (!isset($_GET['token']) || $_GET['token'] !== ACCESS_TOKEN) {
 
 <pre>
 <?php
-// The commands
+
+// make sure dir exists before we chdir to it
+if (!file_exists(LOCAL_CACHE)) {
+	mkdir(LOCAL_CACHE);
+}
+chdir(LOCAL_CACHE);
+
+// commands
 $commands = array();
 
-// Clone the repository into the TMP_DIR
 if (!is_dir(sprintf('%s/%s', LOCAL_CACHE, 'refs'))) {
+	// clone the repository into the LOCAL_CACHE
 	$commands[] = sprintf('git clone --bare %s %s', SOURCE_REPOSITORY, LOCAL_CACHE);
 } else {
-	$commands[] = sprintf('git --git-dir=%s fetch --prune origin', LOCAL_CACHE);
+	// fetch updates to previously cloned LOCAL_CACHE
+	$commands[] = sprintf('git fetch --prune origin');
 }
 
-$commands[] = sprintf('git --git-dir=%s push --mirror %s', LOCAL_CACHE, TARGET_REPOSITORY);
+$commands[] = sprintf('git push --mirror %s', TARGET_REPOSITORY);
 
 // run commands
 foreach ($commands as $command) {

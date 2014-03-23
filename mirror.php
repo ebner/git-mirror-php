@@ -65,7 +65,7 @@ $commands = array();
 
 if (!is_dir(sprintf('%s/%s', LOCAL_CACHE, 'refs'))) {
 	// clone the repository into the LOCAL_CACHE
-	$commands[] = sprintf('git clone --bare %s %s', SOURCE_REPOSITORY, LOCAL_CACHE);
+	$commands[] = sprintf('git clone --mirror %s %s', SOURCE_REPOSITORY, LOCAL_CACHE);
 } else {
 	// fetch updates to previously cloned LOCAL_CACHE
 	$commands[] = sprintf('git fetch --prune origin');

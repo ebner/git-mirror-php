@@ -1,6 +1,6 @@
 <?php
 /**
- * Git mirror script
+ * Git mirror
  *
  * Author: Hannes Ebner <hannes@ebner.se>, 2014
  *
